@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Amixtra Workshop - User Management</title>
+  <style>
+    * {box-sizing: border-box}
+    .container { padding: 30px; }
+    input[type=text], input[type=password] {
+      width: 100%; padding: 15px; margin: 5px 0 22px 0;
+      display: inline-block; border: none; background: #f1f1f1;
+    }
+    .submitbtn {
+      background-color: #000000; color: white; padding: 16px 20px;
+      margin: 8px 0; border: none; cursor: pointer; width: 100%; opacity: 0.9;
+    }
+    .submitbtn:hover { opacity:1; }
+    .getcolor { background-color: #ffffff; text-align: center; }
+    hr { border: 1px solid #f1f1f1; margin-bottom: 25px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Add User</h1>
+    <form id="addUserForm">
+      <label for="username"><b>Username</b></label>
+      <input type="text" placeholder="Enter username" name="username" id="username" required>
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter email" name="email" id="email" required>
+      <button type="submit" class="submitbtn">Add User</button>
+    </form>
+    <hr>
+    <h1>Get User</h1>
+    <form id="getUserForm">
+      <label for="getid"><b>User ID</b></label>
+      <input type="text" placeholder="Enter user id" name="getid" id="getid" required>
+      <button type="submit" class="submitbtn">Get User</button>
+    </form>
+    <hr>
+    <h1>Delete User</h1>
+    <form id="deleteUserForm">
+      <label for="deleteid"><b>User ID</b></label>
+      <input type="text" placeholder="Enter user id" name="deleteid" id="deleteid" required>
+      <button type="submit" class="submitbtn">Delete User</button>
+    </form>
+    <hr>
+    <div id="result"></div>
+  </div>
+  <script>
+    document.getElementById('addUserForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const res = await fetch('/v1/user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, email})
+      });
+      const data = await res.json();
+      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    };
+    document.getElementById('getUserForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('getid').value;
+      const res = await fetch('/v1/user?id=' + encodeURIComponent(id));
+      const data = await res.json();
+      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    };
+    document.getElementById('deleteUserForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('deleteid').value;
+      const res = await fetch('/v1/user?id=' + encodeURIComponent(id), {method: 'DELETE'});
+      const data = await res.json();
+      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    };
+  </script>
+</body>
+</html>
